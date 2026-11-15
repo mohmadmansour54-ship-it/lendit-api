@@ -60,9 +60,9 @@ There are 31 tests at 99% line coverage. They run against **real PostgreSQL**, n
 **The bug.** A naive borrow looks like this:
 
 ```python
-book = db.get(Book, book_id)        # request A and B both read available_copies = 1
-if book.available_copies > 0:       # both pass the check
-    book.available_copies -= 1      # both write 0, so 2 loans exist for 1 physical book
+book = db.get(Book, book_id)  # request A and B both read available_copies = 1
+if book.available_copies > 0:  # both pass the check
+    book.available_copies -= 1  # both write 0, so 2 loans exist for 1 physical book
 ```
 
 `tests/test_concurrency.py` starts 20 threads that each try to borrow the **last copy** at the same instant. A `threading.Barrier` releases them all together, and each thread uses its own database connection. With the naive code, **8 to 19 of the 20 users "got" the single copy** in my runs.
